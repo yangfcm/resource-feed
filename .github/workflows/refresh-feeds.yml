@@ -1,0 +1,25 @@
+name: Refresh Feeds
+
+on:
+  schedule:
+    - cron: '0 14 * * *'  # Daily at 2pm UTC
+  workflow_dispatch:        # Allow manual runs from the Actions tab
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Refresh all feeds
+        run: npm run refresh-feeds
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
